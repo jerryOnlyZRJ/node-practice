@@ -1,3 +1,5 @@
+//$while true;do curl http://localhost:8080;done
+
 const cp = require('child_process')
 const path = require('path')
 const net = require('net')
@@ -19,5 +21,4 @@ server.on('connection', socket => {
 
 server.listen(8080, () => {
     console.log('server is start at port 8080')
-    // server.close()
 })
