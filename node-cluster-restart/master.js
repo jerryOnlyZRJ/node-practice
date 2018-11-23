@@ -1,7 +1,19 @@
 // cluster的底层也是基于child_process.fork实现的
 const cluster = require('cluster');
-const http = require('http');
 const numCPUs = require('os').cpus().length;
+
+let restartQueue = []
+
+function isTooFrequenty() {
+    const limit = 10
+    const during = 60000
+    const time = Date.now()
+    const length = restartQueue.push(time)
+    if (length > limit) {
+        restartQueue = restartQueue.slice(limit * -1)
+    }
+    return restartQueue.length >= limit && restartQueue[restartQueue.length - 1] - restartQueue[0] < during
+}
 
 if (cluster.isMaster) {
     let workers = {}
@@ -23,9 +35,15 @@ if (cluster.isMaster) {
     cluster.on('fork', worker => {
         workers[worker.process.pid] = worker
         worker.on('message', message => {
-            if(message.act === 'suicide'){
-                console.log(`Worker ${worker.process.pid} suicide`)
-                cluster.fork()
+            if (message.act === 'suicide') {
+                if (isTooFrequenty()) {
+                    process.emit('give up')
+                    console.log(`restart process is too frequenty`)
+                    return
+                } else {
+                    console.log(`Worker ${worker.process.pid} suicide`)
+                    cluster.fork()
+                }
             }
         })
         console.log(`Worker ${worker.process.pid} fork success`)
