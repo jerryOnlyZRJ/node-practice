@@ -9,5 +9,5 @@ process.on('message', (message, socket) => {
 
 server.on('request', (req, res) => {
     console.log(`worker[${process.pid}] handle the request`)
-    res.end(`worker[${process.pid}] handle the request`)
+    res.end(`worker[${process.pid}] handle the request\n`)
 })
