@@ -6,7 +6,7 @@ const numCPUs = require('os').cpus().length;
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
 
-    //   在windows环境下开启轮叫调度策略
+    //   在windows环境下开启轮叫调度策略（windows下进程默认是抢占式的）
     //   cluster.schedulingPolicy = cluster.SCHED_RR
 
     // Fork workers.
