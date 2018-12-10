@@ -26,7 +26,5 @@ process.on('uncaughtException', err => {
         setTimeout(() => {
             process.exit(1)
         }, 5000);
-    } else {
-        return
     }
 })
